@@ -22,7 +22,7 @@ function sendData(device = false, hexData = false) {
     device.sendData(hexDataBuffer);
 }
 
-module.exports = (commands, learnEnabled = false) => {
+module.exports = (commands, key, rooms) => {
     /* Server */
     let app = express();
 
@@ -31,11 +31,14 @@ module.exports = (commands, learnEnabled = false) => {
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
 
-    (learnEnabled && app.get('/learn/:command/:mac', (req, res) => {
-        let host = req.params.mac;
+    (app.get('/learn/:key/:host', (req, res) => {
+		
+		if (req.params.key == key) {
+			
+        let host = req.params.host.toLowerCase();
         let device = Broadlink({ host, learnOnly: true });
         if(device) {
-            if (!device.enterLearning) return es.json({error: `Learn Code (IR learning not supported for device at ${host})`});
+            if (!device.enterLearning) return res.json({error: `Learn Code (IR learning not supported for device at ${host})`});
             if (!device.enterLearning && !device.enterRFSweep) return res.json({error:`Scan RF (RF learning not supported for device at ${host})`});
 
             (device.cancelRFSweep && device.cancelRFSweep());
@@ -71,10 +74,8 @@ module.exports = (commands, learnEnabled = false) => {
                 cancelLearning();
 
                 return res.json({
-                    command: req.params.command,
-                    secret: Math.random().toString(36).substring(3),
-                    mac: (macRegExp.test(host)) ? host : false,
-                    ip: (macRegExp.test(host)) ? false : host,
+                    command: "command_name",
+                    group: "group_id",
                     data: message.toString('hex')
                 });
             };
@@ -86,21 +87,33 @@ module.exports = (commands, learnEnabled = false) => {
         } else {
             res.json({error: `Device ${host} not found`});
         }
+		
+		} else {
+			res.json({error: `Key not found: ${req.params.key}`});
+		}
+	   
     }));
 
-    app.post('/command/:name', (req, res) => {
-        const command = commands.find((e) => { return e.command == req.params.name; });
-
-        if (command && req.body.secret && req.body.secret == command.secret) {
-            let host = command.mac || command.ip;
+    app.get('/execute/:key/:room/:name', (req, res) => {
+	
+	   if (req.params.key == key) {
+		   
+		 if (rooms[req.params.room]) {
+			 
+		 const command = commands.find(o => o.command === req.params.name && rooms[req.params.room]["groups"].indexOf(o.group) > -1);
+		
+         if (command) {
+			
+			let host = rooms[req.params.room]["host"].toLowerCase();
             let device = Broadlink({ host });
 
             if (!device) {
-                console.log(`${req.params.name} sendData(no device found at ${host})`);
+                console.log(`Error while performing command "${req.params.name}": No device found at ${host}`);
+				return res.sendStatus(404);
             } else if (!device.sendData) {
-                console.log(`[ERROR] The device at ${device.host.address} (${device.host.macAddress}) doesn't support the sending of IR or RF codes.`);
+                console.log(`Error while performing command "${req.params.name}": The device at ${host} doesn't support sending IR or RF codes`);
             } else if (command.data && command.data.includes('5aa5aa555')) {
-                console.log('[ERROR] This type of hex code (5aa5aa555...) is no longer valid. Use the included "Learn Code" accessory to find new (decrypted) codes.');
+				console.log(`Error while performing command "${req.params.name}": Outdated code type, please use the Learn utility to get a new code`);
             } else {
                 if('sequence' in command) {
                     console.log('Sending sequence..');
@@ -124,10 +137,22 @@ module.exports = (commands, learnEnabled = false) => {
             }
 
             res.sendStatus(501);
-        } else {
-            console.log(`Command not found: ${req.params.name}`);
-            res.sendStatus(404);
-        }
+			
+         } else {
+             console.log(`Command not found: ${req.params.name}`);
+             res.sendStatus(404);
+         }
+			
+         } else {
+             console.log(`Room not found: ${req.params.room}`);
+             res.sendStatus(404);
+         }
+	    
+	   } else {
+	       console.log(`Key not found: ${req.params.key}`);
+           res.sendStatus(403);
+       }
+		
     });
 
     return app;

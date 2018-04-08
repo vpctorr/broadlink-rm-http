@@ -1,15 +1,12 @@
 {
-    "name": "broadlink-rm-server",
-    "version": "0.0.6",
+    "name": "broadlink-rm-http",
+    "version": "1.0.0",
     "main": "index.js",
-    "author": "jor3l",
-    "license": "ISC",
-    "scripts": {
-        "start": "node example"
-    },
+    "author": "TheAslera",
+    "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/jor3l/broadlinkrm-ifttt"
+        "url": "https://github.com/TheAslera/broadlink-rm-http"
     },
     "dependencies": {
         "express": "latest",

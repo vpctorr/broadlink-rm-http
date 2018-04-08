@@ -34,7 +34,7 @@ broadlink.on('deviceReady', (device) => {
 
   if (discoveredDevices[device.host.address] || discoveredDevices[device.host.macAddress]) return;
 
-  console.log(`Discovered Broadlink RM device at ${device.host.address} (${device.host.macAddress})`)
+  console.log(`Discovered Broadlink RM device at ${device.host.macAddress} (${device.host.address})`)
 
   discoveredDevices[device.host.address] = device;
   discoveredDevices[device.host.macAddress] = device;
