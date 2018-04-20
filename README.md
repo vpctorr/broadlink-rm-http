@@ -12,7 +12,7 @@ Create a file named ```index.js``` and add the following code:
 ```js
 "use stict";
 const PORT = process.env.PORT || 1880;
-const BroadlinkServer = require('broadlink-rm-server');
+const BroadlinkServer = require('broadlink-rm-http');
 const commands = require('./commands');
 
 const key = "YOUR_SECRET";

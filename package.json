@@ -1,6 +1,6 @@
 {
     "name": "broadlink-rm-http",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "main": "index.js",
     "author": "TheAslera",
     "license": "MIT",
@@ -10,12 +10,9 @@
     },
     "dependencies": {
         "express": "latest",
-        "lodash": "latest",
         "cors": "latest",
         "body-parser": "latest",
-        "request": "latest",
         "helmet": "latest",
-        "broadlinkjs-rm": "latest",
-        "uuid": "latest"
+        "broadlinkjs-rm": "latest"
     }
 }
