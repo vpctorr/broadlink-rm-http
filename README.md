@@ -10,7 +10,7 @@ npm install broadlink-rm-http
 
 Create a file named ```index.js``` and add the following code:
 ```js
-"use stict";
+"use strict";
 const PORT = process.env.PORT || 1880;
 const BroadlinkServer = require('broadlink-rm-http');
 const commands = require('./commands');
