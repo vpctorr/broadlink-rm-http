@@ -1,4 +1,4 @@
-"use stict";
+"use strict";
 const PORT = process.env.PORT || 1880;
 const BroadlinkServer = require('broadlink-rm-http');
 const commands = require('./commands');
