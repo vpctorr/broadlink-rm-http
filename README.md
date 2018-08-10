@@ -1,6 +1,9 @@
 # broadlink-rm-http
 A Web server to control IR & RF devices using Broadlink RM. Can be used for custom applications or with IFTTT to add Google Home, Alexa & HomeKit support (tutorial below).
 
+[![npm version](https://badgen.net/npm/v/broadlink-rm-http)](https://npmjs.com/package/broadlink-rm-http)
+[![npm downloads](https://badgen.net/npm/dm/broadlink-rm-http)](https://npmjs.com/package/broadlink-rm-http)
+
 # Getting started
 
 Install this package by running:
@@ -11,19 +14,20 @@ npm install broadlink-rm-http
 Create a file named ```index.js``` and add the following code:
 ```js
 "use strict";
-const PORT = process.env.PORT || 1880;
+
 const BroadlinkServer = require('broadlink-rm-http');
 const commands = require('./commands');
 
+const port = process.env.PORT || 1880;
 const key = "YOUR_SECRET";
 
-var rooms = [];
+const rooms = [];
 rooms["ROOM_NAME"] = {host:"MAC_OR_IP",groups:["GROUP_A", "GROUP_B"]};
 
 let app = BroadlinkServer(commands, key, rooms);
-    app.listen(PORT);
+app.listen(port);
 
-console.log('Server running, go to http://localhost:' + PORT);
+console.log('Server running, go to http://localhost:' + port);
 ```
 
 Create a file named ```commands.js``` and add:
